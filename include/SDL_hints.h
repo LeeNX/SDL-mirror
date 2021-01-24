@@ -664,6 +664,26 @@ extern "C" {
 #define SDL_HINT_JOYSTICK_HIDAPI_PS5_PLAYER_LED "SDL_JOYSTICK_HIDAPI_PS5_PLAYER_LED"
 
 /**
+ *  \brief  A variable controlling whether the player LEDs should be lit to indicate which player is associated with a Generic controller.
+ *
+ *  This variable can be set to the following values:
+ *    "0"       - player LEDs are not enabled
+ *    "1"       - player LEDs are enabled (the default)
+ */
+#define SDL_HINT_JOYSTICK_HIDAPI_GENERIC_PLAYER_LED "SDL_JOYSTICK_HIDAPI_GENERIC_PLAYER_LED"
+
+/**
+ *  \brief  A variable controlling whether the HIDAPI driver for Generic controllers should be used.
+ *
+ *  This variable can be set to the following values:
+ *    "0"       - HIDAPI driver is not used
+ *    "1"       - HIDAPI driver is used
+ *
+ *  The default is the value of SDL_HINT_JOYSTICK_HIDAPI
+ */
+#define SDL_HINT_JOYSTICK_HIDAPI_GENERIC "SDL_JOYSTICK_HIDAPI_GENERIC"
+
+/**
  *  \brief  A variable controlling whether the HIDAPI driver for Google Stadia controllers should be used.
  *
  *  This variable can be set to the following values:

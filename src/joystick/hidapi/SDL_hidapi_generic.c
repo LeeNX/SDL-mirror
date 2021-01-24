@@ -35,6 +35,7 @@
 
 /* Define this if you want to log all packets from the controller */
 /*#define DEBUG_GENERIC_PROTOCOL*/
+#define DEBUG_GENERIC_PROTOCOL
 
 enum
 {
@@ -149,7 +150,7 @@ HIDAPI_DriverGeneric_SetJoystickSensorsEnabled(SDL_HIDAPI_Device *device, SDL_Jo
 }
 
 static void
-HIDAPI_DriverGeneric_HandleStatePacket(SDL_Joystick *joystick, SDL_DriverStadia_Context *ctx, Uint8 *data, int size)
+HIDAPI_DriverGeneric_HandleStatePacket(SDL_Joystick *joystick, SDL_DriverGeneric_Context *ctx, Uint8 *data, int size)
 {
     Sint16 axis;
 

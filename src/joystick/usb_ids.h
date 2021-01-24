@@ -25,7 +25,7 @@
 /* Definitions of useful USB VID/PID values */
 
 #define USB_VENDOR_APPLE        0x05ac
-#define USB_VENDOR_GENERIC      0x18d2                            /* Made up vendor ID */
+#define USB_VENDOR_GENERIC      0xe502                            /* Made up vendor ID */
 #define USB_VENDOR_GOOGLE       0x18d1
 #define USB_VENDOR_HYPERKIN     0x2e24
 #define USB_VENDOR_MICROSOFT    0x045e
@@ -38,7 +38,7 @@
 #define USB_VENDOR_SONY         0x054c
 #define USB_VENDOR_VALVE        0x28de
 
-#define USB_PRODUCT_GENERIC_CONTROLLER                  0x9401    /* Made up product ID */
+#define USB_PRODUCT_GENERIC_CONTROLLER                  0xbbab    /* Made up product ID */
 #define USB_PRODUCT_GOOGLE_STADIA_CONTROLLER            0x9400
 #define USB_PRODUCT_EVORETRO_GAMECUBE_ADAPTER           0x1846
 #define USB_PRODUCT_NINTENDO_GAMECUBE_ADAPTER           0x0337

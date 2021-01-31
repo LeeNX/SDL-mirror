@@ -345,7 +345,7 @@ if test x$enable_libc = xyes; then
         AC_DEFINE(HAVE_MPROTECT, 1, [ ])
         ]),
     )
-    AC_CHECK_FUNCS(malloc calloc realloc free getenv setenv putenv unsetenv qsort abs bcopy memset memcpy memmove wcslen wcslcpy wcslcat wcsdup wcsstr wcscmp wcsncmp wcscasecmp _wcsicmp wcsncasecmp _wcsnicmp strlen strlcpy strlcat _strrev _strupr _strlwr strchr strrchr strstr strtok_r itoa _ltoa _uitoa _ultoa strtol strtoul _i64toa _ui64toa strtoll strtoull atoi atof strcmp strncmp _stricmp strcasecmp _strnicmp strncasecmp vsscanf vsnprintf fopen64 fseeko fseeko64 sigaction setjmp nanosleep sysconf sysctlbyname getauxval elf_aux_info clock_gettime_nsec_np poll _Exit)
+    AC_CHECK_FUNCS(malloc calloc realloc free getenv setenv putenv unsetenv qsort abs bcopy memset memcpy memmove wcslen wcslcpy wcslcat wcsdup wcsstr wcscmp wcsncmp wcscasecmp _wcsicmp wcsncasecmp _wcsnicmp strlen strlcpy strlcat _strrev _strupr _strlwr strchr strrchr strstr strtok_r itoa _ltoa _uitoa _ultoa strtol strtoul _i64toa _ui64toa strtoll strtoull atoi atof strcmp strncmp _stricmp strcasecmp _strnicmp strncasecmp vsscanf vsnprintf fopen64 fseeko fseeko64 sigaction setjmp nanosleep sysconf sysctlbyname getauxval elf_aux_info poll _Exit)
 
     AC_CHECK_LIB(m, pow, [LIBS="$LIBS -lm"; EXTRA_LDFLAGS="$EXTRA_LDFLAGS -lm"])
     AC_CHECK_FUNCS(acos acosf asin asinf atan atanf atan2 atan2f ceil ceilf copysign copysignf cos cosf exp expf fabs fabsf floor floorf trunc truncf fmod fmodf log logf log10 log10f lround lroundf pow powf round roundf scalbn scalbnf sin sinf sqrt sqrtf tan tanf)
@@ -3146,7 +3146,7 @@ CheckDIRECTX()
 {
     AC_ARG_ENABLE(directx,
 AS_HELP_STRING([--enable-directx], [use DirectX for Windows audio/video [[default=yes]]]),
-                  , enable_directx=yes)
+                                 , enable_directx=yes)
     if test x$enable_directx = xyes; then
         AC_CHECK_HEADER(d3d9.h, have_d3d=yes)
         AC_CHECK_HEADER(d3d11_1.h, have_d3d11=yes)
@@ -3177,27 +3177,37 @@ AS_HELP_STRING([--enable-directx], [use DirectX for Windows audio/video [[defaul
         esac
     fi
 
-    dnl The following are independent of --enable-directx
-    AC_CHECK_HEADER(xinput.h, have_xinput=yes)
-    AC_TRY_COMPILE([
+    AC_ARG_ENABLE(xinput,
+AS_HELP_STRING([--enable-xinput], [use Xinput for Windows [[default=yes]]]),
+                                , enable_xinput=yes)
+    if test x$enable_xinput = xyes; then
+        have_xinput_gamepadex=no
+        have_xinput_stateex=no
+        AC_CHECK_HEADER(xinput.h, have_xinput=yes)
+        AC_MSG_CHECKING(for struct XINPUT_GAMEPAD_EX)
+        AC_TRY_COMPILE([
 #include <windows.h>
 #include <xinput.h>
 XINPUT_GAMEPAD_EX x1;
-        ],[],[have_xinput_gamepadex=yes])
-    AC_TRY_COMPILE([
+            ],[],[have_xinput_gamepadex=yes])
+        AC_MSG_RESULT($have_xinput_gamepadex)
+        AC_MSG_CHECKING(for struct XINPUT_STATE_EX)
+        AC_TRY_COMPILE([
 #include <windows.h>
 #include <xinput.h>
 XINPUT_STATE_EX s1;
-        ],[],[have_xinput_stateex=yes])
+            ],[],[have_xinput_stateex=yes])
+        AC_MSG_RESULT($have_xinput_stateex)
 
-    if test x$have_xinput = xyes; then
-        AC_DEFINE(HAVE_XINPUT_H, 1, [ ])
-    fi
-    if test x$have_xinput_gamepadex = xyes; then
-        AC_DEFINE(HAVE_XINPUT_GAMEPAD_EX, 1, [ ])
-    fi
-    if test x$have_xinput_stateex = xyes; then
-        AC_DEFINE(HAVE_XINPUT_STATE_EX, 1, [ ])
+        if test x$have_xinput = xyes; then
+            AC_DEFINE(HAVE_XINPUT_H, 1, [ ])
+        fi
+        if test x$have_xinput_gamepadex = xyes; then
+            AC_DEFINE(HAVE_XINPUT_GAMEPAD_EX, 1, [ ])
+        fi
+        if test x$have_xinput_stateex = xyes; then
+            AC_DEFINE(HAVE_XINPUT_STATE_EX, 1, [ ])
+        fi
     fi
 
     AC_CHECK_HEADER(mmdeviceapi.h, have_wasapi=yes)
@@ -3483,6 +3493,29 @@ AS_HELP_STRING([--enable-clock_gettime], [use clock_gettime() instead of gettime
                EXTRA_LDFLAGS="$EXTRA_LDFLAGS"
             fi
         fi
+    fi
+}
+
+dnl Check for clock_gettime_nsec_np()
+CheckClockGettimeAPPLE()
+{
+    have_clock_gettime_apple=no
+    AC_MSG_CHECKING(for clock_gettime_nsec_np)
+    AC_TRY_LINK([
+#include <AvailabilityMacros.h>
+#include <time.h>
+      ],[
+#if MAC_OS_X_VERSION_MIN_REQUIRED < 101200
+#error Need 10.12 or newer target
+#endif
+        return !clock_gettime_nsec_np(CLOCK_MONOTONIC);
+      ],[
+        have_clock_gettime_apple=yes
+    ])
+    AC_MSG_RESULT($have_clock_gettime_apple)
+
+    if test x$have_clock_gettime_apple = xyes; then
+        AC_DEFINE(HAVE_CLOCK_GETTIME_NSEC_NP, 1, [ ])
     fi
 }
 
@@ -4021,6 +4054,9 @@ AS_HELP_STRING([--enable-render-d3d], [enable the Direct3D render driver [[defau
         CheckVulkan
         CheckPTHREAD
 
+        dnl assuming iOS >= 10.0
+        AC_DEFINE(HAVE_CLOCK_GETTIME_NSEC_NP, 1, [ ])
+
         SOURCES="$SOURCES $srcdir/src/misc/ios/*.m"
         have_misc=yes
 
@@ -4116,6 +4152,7 @@ AS_HELP_STRING([--enable-render-d3d], [enable the Direct3D render driver [[defau
 
         CheckVisibilityHidden
         CheckDeclarationAfterStatement
+        CheckClockGettimeAPPLE
         CheckDummyVideo
         CheckDiskAudio
         CheckDummyAudio

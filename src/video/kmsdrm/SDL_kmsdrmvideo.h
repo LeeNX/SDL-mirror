@@ -41,8 +41,9 @@ typedef struct SDL_VideoData
 
     struct gbm_device *gbm_dev;
 
-    SDL_bool video_init;        /* Has VideoInit succeeded? */
-    SDL_bool vulkan_mode;       /* Are we in Vulkan mode? One VK window is enough to be. */
+    SDL_bool video_init;             /* Has VideoInit succeeded? */
+    SDL_bool vulkan_mode;            /* Are we in Vulkan mode? One VK window is enough to be. */
+    SDL_bool async_pageflip_support; /* Does the hardware support async. pageflips? */ 
 
     SDL_Window **windows;
     int max_windows;
@@ -138,7 +139,6 @@ void KMSDRM_RaiseWindow(_THIS, SDL_Window * window);
 void KMSDRM_MaximizeWindow(_THIS, SDL_Window * window);
 void KMSDRM_MinimizeWindow(_THIS, SDL_Window * window);
 void KMSDRM_RestoreWindow(_THIS, SDL_Window * window);
-void KMSDRM_SetWindowGrab(_THIS, SDL_Window * window, SDL_bool grabbed);
 void KMSDRM_DestroyWindow(_THIS, SDL_Window * window);
 
 /* Window manager function */

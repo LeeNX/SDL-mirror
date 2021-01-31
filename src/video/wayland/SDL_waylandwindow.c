@@ -670,18 +670,26 @@ Wayland_MinimizeWindow(_THIS, SDL_Window * window)
 }
 
 void
-Wayland_SetWindowGrab(_THIS, SDL_Window *window, SDL_bool grabbed)
+Wayland_SetWindowMouseGrab(_THIS, SDL_Window *window, SDL_bool grabbed)
 {
     SDL_VideoData *data = (SDL_VideoData *) _this->driverdata;
 
     if (grabbed) {
         Wayland_input_confine_pointer(window, data->input);
+    } else {
+        Wayland_input_unconfine_pointer(data->input);
+    }
+}
 
-        if (SDL_GetHintBoolean(SDL_HINT_GRAB_KEYBOARD, SDL_FALSE))
-            Wayland_input_grab_keyboard(window, data->input);
+void
+Wayland_SetWindowKeyboardGrab(_THIS, SDL_Window *window, SDL_bool grabbed)
+{
+    SDL_VideoData *data = (SDL_VideoData *) _this->driverdata;
+
+    if (grabbed) {
+        Wayland_input_grab_keyboard(window, data->input);
     } else {
         Wayland_input_ungrab_keyboard(window);
-        Wayland_input_unconfine_pointer(data->input);
     }
 }
 

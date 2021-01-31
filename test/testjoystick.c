@@ -18,6 +18,8 @@
 
 #include "SDL.h"
 
+#include "/Users/leet/src/leet/sdl2/SDL-leenx/include/SDL_hints.h"
+
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
 #endif
@@ -87,6 +89,8 @@ PrintJoystick(SDL_Joystick *joystick)
     SDL_Log("instance id: %d\n", SDL_JoystickInstanceID(joystick));
     SDL_Log("       guid: %s\n", guid);
     SDL_Log("    VID/PID: 0x%.4x/0x%.4x\n", SDL_JoystickGetVendor(joystick), SDL_JoystickGetProduct(joystick));
+    SDL_Log("     Serial: %s\n", SDL_JoystickGetSerial(joystick));
+    SDL_Log("        LED: %d\n", SDL_JoystickHasLED(joystick));
 }
 
 static void
@@ -265,6 +269,8 @@ int
 main(int argc, char *argv[])
 {
     SDL_SetHint(SDL_HINT_ACCELEROMETER_AS_JOYSTICK, "0");
+    SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_GENERIC, "1");
+    SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_GENERIC_PLAYER_LED, "1");
 
     /* Enable standard application logging */
     SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO);
